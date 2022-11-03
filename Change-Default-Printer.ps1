@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0
+.VERSION 1.1
 
 .GUID 9e0fe95d-a694-43d3-a972-c1779868af7e
 
@@ -39,7 +39,7 @@
 #>
 Param(
   [Parameter()]
-  [string]$StartupAppFile,
+  [string]$StartupAppFile
 )
 
 Add-Type -AssemblyName System.Windows.Forms
@@ -51,7 +51,6 @@ $form.Size = New-Object System.Drawing.Size(300,200)
 $form.StartPosition = 'CenterScreen'
 $form.ControlBox = $false
 $form.FormBorderStyle = 'Fixed3d'
-
 
 $okButton = New-Object System.Windows.Forms.Button
 $okButton.Location = New-Object System.Drawing.Point(60,125)
@@ -86,6 +85,8 @@ Foreach($printer in $printerlist){
   [void] $listBox.Items.Add($printer.Name)
 }
 
+$listBox.SetSelected(0,$true)
+
 $form.Controls.Add($listBox)
 $form.Topmost = $true
 $result = $form.ShowDialog()
@@ -96,6 +97,12 @@ if ($result -eq [System.Windows.Forms.DialogResult]::OK)
 
   $printer = Get-CimInstance -Class Win32_Printer -Filter "Name='$($printerselected)'"
   Invoke-CimMethod -InputObject $printer -MethodName SetDefaultPrinter
+
+  if ($StartupAppFile) {
+    Start-Process $StartupAppFile
+  }
 }
 
-c:\Program Files (x86)\Histotrac\Histotrac.exe
+# C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -File C:\code\devops\windows\windows-change-default-printer\ChangeDefaultPrinter.ps1 -StartupAppFile "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+
+# C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -File C:\code\devops\windows\windows-change-default-printer\ChangeDefaultPrinter.ps1 -StartupAppFile "C:\Program Files (x86)\Histotrac\Histotrac.exe"
