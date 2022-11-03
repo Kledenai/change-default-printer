@@ -102,7 +102,3 @@ if ($result -eq [System.Windows.Forms.DialogResult]::OK)
     Start-Process $StartupAppFile
   }
 }
-
-# C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -File C:\code\devops\windows\windows-change-default-printer\ChangeDefaultPrinter.ps1 -StartupAppFile "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-
-# C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -File C:\code\devops\windows\windows-change-default-printer\ChangeDefaultPrinter.ps1 -StartupAppFile "C:\Program Files (x86)\Histotrac\Histotrac.exe"
