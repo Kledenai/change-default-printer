@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.2
+.VERSION 1.3
 
 .GUID 9e0fe95d-a694-43d3-a972-c1779868af7e
 
@@ -45,6 +45,35 @@ Param(
   [string]$StartupAppFile
 )
 
+# instantiating the variable that will be used to store the list of printers for a comparision with the printer selected
+#
+[System.Collections.ArrayList]$printerhistory = @()
+
+# instantiating the function that will be used to get the list of all printers in the machine
+#
+Function GetListPrinters {
+  try {
+    # get all printers listed on the machine
+    #
+    $printerlist = Get-CimInstance -Class Win32_Printer
+
+    # loop to load the printer take the machine in the listbox, and taking advantage of the loop to add the machine
+    # to be placed in the $printerhistory along with the information if it is shared or not
+    #
+    Foreach($printer in $printerlist){
+      [void] $listBox.Items.Add((&{if($printer.shared){$printer.ShareName} else {$printer.Name}}))
+      [void] $printerhistory.Add((&{if($printer.shared){[pscustomobject]@{Name=$printer.ShareName;Shared=$true}} else {[pscustomobject]@{Name=$printer.Name;Shared=$false}}}))
+    }
+
+    # setting the first item of the listbox as default
+    #
+    $listBox.SetSelected(0,$true)
+  } catch {
+    Write-Host "An error occurred:"
+    Write-Host $_
+  }
+}
+
 # declaring the Microsoft .NET Core class in the script session
 #
 Add-Type -AssemblyName System.Windows.Forms
@@ -66,6 +95,7 @@ $okButton.Location = New-Object System.Drawing.Point(60,125)
 $okButton.Size = New-Object System.Drawing.Size(80,24)
 $okButton.Text = 'OK'
 $okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+
 $form.AcceptButton = $okButton
 $form.Controls.Add($okButton)
 
@@ -76,8 +106,21 @@ $cancelButton.Location = New-Object System.Drawing.Point(150,125)
 $cancelButton.Size = New-Object System.Drawing.Size(80,24)
 $cancelButton.Text = 'Cancel'
 $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+
 $form.CancelButton = $cancelButton
 $form.Controls.Add($cancelButton)
+
+# configuring the reload button to reload the list of printers
+#
+$reloadButton = New-Object System.Windows.Forms.Button
+$reloadButton.Location = New-Object System.Drawing.Point(247, 10)
+$reloadButton.Size = New-Object System.Drawing.Size(24,24)
+$reloadButton.Font = New-Object System.Drawing.Font("Wingdings 3", 11, [System.Drawing.FontStyle]::Regular);
+$reloadButton.Text = [char]::ConvertFromUtf32(81)
+$reloadButton.Add_Click({GetListPrinters})
+
+$form.AcceptButton = $reloadButton
+$form.Controls.Add($reloadButton)
 
 # configuring the label which will appear on top of the listbox stating that they are the printers below
 #
@@ -85,6 +128,7 @@ $label = New-Object System.Windows.Forms.Label
 $label.Location = New-Object System.Drawing.Point(10,20)
 $label.Size = New-Object System.Drawing.Size(280,20)
 $label.Text = 'Printers:'
+
 $form.Controls.Add($label)
 
 # configuring the listbox component which will show the list of printers for the user to select
@@ -94,29 +138,11 @@ $listBox.Location = New-Object System.Drawing.Point(10,40)
 $listBox.Size = New-Object System.Drawing.Size(260,20)
 $listBox.Height = 80
 
-# instantiating the variable that will be used to store the list of printers for a comparision with the printer selected
-#
-[System.Collections.ArrayList]$printerhistory = @()
-
-# get all printers listed on the machine
-#
-$printerlist = Get-CimInstance -Class Win32_Printer
-
-# loop to load the printer take the machine in the listbox, and taking advantage of the loop to add the machine
-# to be placed in the $printerhistory along with the information if it is shared or not
-#
-Foreach($printer in $printerlist){
-  [void] $listBox.Items.Add((&{if($printer.shared){$printer.ShareName} else {$printer.Name}}))
-  [void] $printerhistory.Add((&{if($printer.shared){[pscustomobject]@{Name=$printer.ShareName;Shared=$true}} else {[pscustomobject]@{Name=$printer.Name;Shared=$false}}}))
-}
-
-# setting the first item of the listbox as default
-#
-$listBox.SetSelected(0,$true)
-
-# adding the listbox component
-#
 $form.Controls.Add($listBox)
+
+# run the function to get the list of printers
+#
+GetListPrinters | Out-Null
 
 # forcing the modal to always be above any other program when it runs
 #
