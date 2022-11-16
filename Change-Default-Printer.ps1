@@ -53,6 +53,11 @@ Param(
 #
 Function GetListPrinters {
   try {
+    # clear the listbox items and printerhistory to reload without duplicated items
+    #
+    $printerhistory.Clear()
+    $listBox.Items.Clear()
+
     # get all printers listed on the machine
     #
     $printerlist = Get-CimInstance -Class Win32_Printer
