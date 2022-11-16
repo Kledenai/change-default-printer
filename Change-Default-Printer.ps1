@@ -120,8 +120,10 @@ $form.Controls.Add($cancelButton)
 $reloadButton = New-Object System.Windows.Forms.Button
 $reloadButton.Location = New-Object System.Drawing.Point(247, 10)
 $reloadButton.Size = New-Object System.Drawing.Size(24,24)
-$reloadButton.Font = New-Object System.Drawing.Font("Wingdings 3", 11, [System.Drawing.FontStyle]::Regular);
-$reloadButton.Text = [char]::ConvertFromUtf32(81)
+$reloadButton.Font = New-Object System.Drawing.Font("Cambria Math", 11, [System.Drawing.FontStyle]::Regular);
+$reloadButton.Text = "↻"
+$reloadButton.TextAlign = "MiddleRight"
+$reloadButton.Padding = New-Object System.Windows.Forms.Padding(0,2,0,0)
 $reloadButton.Add_Click({GetListPrinters})
 
 $form.AcceptButton = $reloadButton
