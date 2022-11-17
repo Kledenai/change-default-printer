@@ -122,7 +122,6 @@ $reloadButton.Location = New-Object System.Drawing.Point(247, 10)
 $reloadButton.Size = New-Object System.Drawing.Size(24,24)
 $reloadButton.Font = New-Object System.Drawing.Font("Arial", 11, [System.Drawing.FontStyle]::Regular)
 $reloadButton.Text = "↻"
-$reloadButton.Image = $image
 $reloadButton.TextAlign = "MiddleRight"
 $reloadButton.Padding = New-Object System.Windows.Forms.Padding(0,2,0,0)
 $reloadButton.Add_Click({GetListPrinters})
