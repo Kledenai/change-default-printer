@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.8
+.VERSION 1.9
 
 .GUID 9e0fe95d-a694-43d3-a972-c1779868af7e
 
@@ -115,15 +115,23 @@ $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
 $form.CancelButton = $cancelButton
 $form.Controls.Add($cancelButton)
 
+# convert base64 string into a image
+#
+$base64ImageString = "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAGJJREFUOE/VklEOABAMQ+vYTuDYxGJCTTaf/Fn2VNcl2KdSOdG9HoXR4NU3sKswwP/RnglGIH1EbKiCB7JnAT3IHN9nYPfw7DM61WNAa+AR1QIgrzlu4RobpDlOoduKeUuOBi0+FwrD7xLPAAAAAElFTkSuQmCC"
+$imageBytes = [Convert]::FromBase64String($base64ImageString)
+$ms = New-Object IO.MemoryStream($imageBytes, 0, $imageBytes.Length)
+$ms.Write($imageBytes, 0, $imageBytes.Length);
+$reloadImage = [System.Drawing.Image]::FromStream($ms, $true)
+
 # configuring the reload button to reload the list of printers
 #
 $reloadButton = New-Object System.Windows.Forms.Button
-$reloadButton.Location = New-Object System.Drawing.Point(247, 10)
+$reloadButton.Location = New-Object System.Drawing.Point(245, 10)
 $reloadButton.Size = New-Object System.Drawing.Size(24,24)
 $reloadButton.Font = New-Object System.Drawing.Font("Arial", 11, [System.Drawing.FontStyle]::Regular)
-$reloadButton.Text = "↻"
-$reloadButton.TextAlign = "MiddleRight"
-$reloadButton.Padding = New-Object System.Windows.Forms.Padding(0,2,0,0)
+$reloadButton.Image = $reloadImage
+$reloadButton.BackgroundImageLayout = 2
+$reloadButton.Padding = New-Object System.Windows.Forms.Padding(0,0,3,2)
 $reloadButton.Add_Click({GetListPrinters})
 
 $form.AcceptButton = $reloadButton
@@ -132,7 +140,7 @@ $form.Controls.Add($reloadButton)
 # configuring the label which will appear on top of the listbox stating that they are the printers below
 #
 $label = New-Object System.Windows.Forms.Label
-$label.Location = New-Object System.Drawing.Point(10,20)
+$label.Location = New-Object System.Drawing.Point(8,20)
 $label.Size = New-Object System.Drawing.Size(280,20)
 $label.Text = 'Printers:'
 
