@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.5
+.VERSION 1.6
 
 .GUID 9e0fe95d-a694-43d3-a972-c1779868af7e
 
@@ -42,7 +42,9 @@
 #
 Param(
   [Parameter()]
-  [string]$StartupAppFile
+  [string]$StartupAppFile,
+  [string]$ButtonReloadFont,
+  [string]$ButtonReloadText
 )
 
 # instantiating the variable that will be used to store the list of printers for a comparision with the printer selected
@@ -120,8 +122,9 @@ $form.Controls.Add($cancelButton)
 $reloadButton = New-Object System.Windows.Forms.Button
 $reloadButton.Location = New-Object System.Drawing.Point(247, 10)
 $reloadButton.Size = New-Object System.Drawing.Size(24,24)
-$reloadButton.Font = New-Object System.Drawing.Font("Cambria Math", 11, [System.Drawing.FontStyle]::Regular);
-$reloadButton.Text = "↻"
+$reloadButton.Font = New-Object System.Drawing.Font((&{if($ButtonReloadFont){"$($ButtonReloadFont)"}else{"Arial"}}), 11, [System.Drawing.FontStyle]::Regular)
+$reloadButton.Text = (&{if($ButtonReloadText){"$($ButtonReloadText)"}else{"↻"}})
+$reloadButton.Image = $image
 $reloadButton.TextAlign = "MiddleRight"
 $reloadButton.Padding = New-Object System.Windows.Forms.Padding(0,2,0,0)
 $reloadButton.Add_Click({GetListPrinters})
